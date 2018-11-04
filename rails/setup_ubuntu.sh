@@ -1,21 +1,3 @@
-# -*- mode: ruby -*-
-# vi: set ft=ruby :
-
-Vagrant.configure("2") do |config|
-  config.vm.box = "ubuntu/xenial64"
-  config.vm.box_version = "20171011.0.0"
-  config.vm.box_check_update = false
-  config.vm.network "forwarded_port", guest: 3000, host: 3000, host_ip: "127.0.0.1"
-
-  # https://groups.google.com/forum/#!topic/vagrant-up/eZljy-bddoI
-  config.vm.provider "virtualbox" do |vb|
-    vb.customize [ "modifyvm", :id, "--uartmode1", "disconnected" ]
-    vb.memory = 2048
-  end
-
-  config.vm.provision :shell, inline: <<-SHELL
-sudo -u ubuntu -i -- <<EOF
-
 # Enable truly non interactive apt-get installs
 export DEBIAN_FRONTEND=noninteractive
 
@@ -33,7 +15,7 @@ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubun
 sudo apt-get update
 sudo apt-get install -yq git build-essential imagemagick phantomjs libmagickwand-dev libcurl4-openssl-dev nodejs yarn docker-ce python2.7 python-pip
 
-sudo usermod -aG docker \\$(whoami)
+sudo usermod -aG docker $(whoami)
 
 pip install --upgrade pip awscli
 
@@ -42,11 +24,11 @@ cd .rbenv && src/configure && make -C src && cd -
 git clone https://github.com/rbenv/ruby-build.git .rbenv/plugins/ruby-build
 echo '' >> .bashrc
 # the double basckslashes are for heredoc syntax!
-echo 'export PATH="\\$HOME/.rbenv/bin:\\$PATH"' >> .bashrc
-echo 'eval "\\$(rbenv init -)"' >> .bashrc
+echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> .bashrc
+echo 'eval "$(rbenv init -)"' >> .bashrc
 
-PATH="\\$(pwd)/.rbenv/bin:\\$PATH"
-eval "\\$(rbenv init -)"
+PATH="$(pwd)/.rbenv/bin:$PATH"
+eval "$(rbenv init -)"
 
 sudo apt-get install -yq libssl-dev libreadline-dev
 rbenv install 2.4.1
@@ -56,10 +38,10 @@ gem install bundler
 sudo ln -s /usr/lib/x86_64-linux-gnu/ImageMagick-6.8.9/bin-Q16/Magick-config /usr/bin/Magick-config
 echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 
-echo 'export PATH="\\$(yarn global bin):\\$PATH"' >> .bashrc
+echo 'export PATH="$(yarn global bin):$PATH"' >> .bashrc
 yarn global add flow-bin@0.52.0 grunt-cli
 
-PATH="\\$(yarn global bin):\\$PATH"
+PATH="$(yarn global bin):$PATH"
 
 # https://docs.docker.com/compose/install/#install-compose
 sudo curl -L https://github.com/docker/compose/releases/download/1.17.1/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
@@ -75,7 +57,7 @@ wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-
 sudo apt-get update
 sudo apt-get install -yq postgresql-9.6 libpq-dev
 
-sudo -u postgres createuser -s \\$(whoami)
+sudo -u postgres createuser -s $(whoami)
 sudo sed -i "s|^\\(host\\s\\+all\\s\\+all\\s\\+127.0.0.1/32\\s\\+\\).\\+|\\1trust|" /etc/postgresql/9.6/main/pg_hba.conf
 sudo sed -i "s|^\\(host\\s\\+all\\s\\+all\\s\\+::1/128\\s\\+\\).\\+|\\1trust|" /etc/postgresql/9.6/main/pg_hba.conf
 sudo -u postgres psql -c "SELECT pg_reload_conf();"
@@ -114,9 +96,9 @@ rake db:reset
 
 rbenv --version
 ruby --version
-echo node \\$(node --version)
-echo npm \\$(npm --version)
-echo yarn \\$(yarn --version)
+echo node $(node --version)
+echo npm $(npm --version)
+echo yarn $(yarn --version)
 grunt --version
 flow version
 heroku --version
@@ -134,7 +116,7 @@ echo -e "\n"
 # https://www.alexkras.com/how-to-copy-one-file-from-vagrant-virtual-machine-to-local-host/
 # https://stackoverflow.com/questions/28471542/cant-ssh-to-vagrant-vms-using-the-insecure-private-key-vagrant-1-7-2
 echo "you almost certainly want to get your local ssh keys into this vagrant box for convenience: (run in host)"
-echo "scp -r -i .vagrant/machines/default/virtualbox/private_key -P 2222 ~/.ssh/id_rsa* ubuntu@127.0.0.1:/home/ubuntu/.ssh/"
+echo "scp -r -i .vagrant/machines/default/virtualbox/private_key -P 2222 ~/.ssh/id_rsa* vagrant@127.0.0.1:/home/vagrant/.ssh/"
 echo "if this is a vagrant re-install, you might also need to 'sed -i '' '6d' ~/.ssh/known_hosts' with the appropriate line per the error you get from running the above cmd"
 echo "or you can add an entry into your host ~/.ssh/config for 127.0.0.1 to use StrictHostKeyChecking=no"
 
@@ -146,7 +128,3 @@ echo -e "\n\n"
 # https://github.com/hashicorp/vagrant/issues/5827
 # https://stackoverflow.com/questions/28668436/how-to-change-the-default-binding-ip-of-rails-4-2-development-server
 echo "and to access the website running inside here, you must run 'rails server -b 0.0.0.0' because virtualbox passes the requests in as if from a different ip but rails only binds to localhost"
-
-EOF
-  SHELL
-end

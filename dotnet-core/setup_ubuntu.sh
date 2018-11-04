@@ -1,24 +1,3 @@
-# -*- mode: ruby -*-
-# vi: set ft=ruby :
-
-Vagrant.configure("2") do |config|
-  config.vm.box = "ubuntu/xenial64"
-  config.vm.box_version = "20171011.0.0"
-  config.vm.box_check_update = false
-  config.vm.network "forwarded_port", guest: 5000, host: 5000, host_ip: "127.0.0.1"
-  config.vm.network "forwarded_port", guest: 5001, host: 5001, host_ip: "127.0.0.1"
-  config.vm.network "forwarded_port", guest: 5002, host: 5002, host_ip: "127.0.0.1"
-  config.vm.network "forwarded_port", guest: 5003, host: 5003, host_ip: "127.0.0.1"
-
-  # https://groups.google.com/forum/#!topic/vagrant-up/eZljy-bddoI
-  config.vm.provider "virtualbox" do |vb|
-    vb.customize [ "modifyvm", :id, "--uartmode1", "disconnected" ]
-    vb.memory = 2048
-  end
-
-  config.vm.provision :shell, inline: <<-SHELL
-sudo -u ubuntu -i -- <<EOF
-
 # Enable truly non interactive apt-get installs
 export DEBIAN_FRONTEND=noninteractive
 
@@ -39,14 +18,14 @@ sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsof
 sudo apt-get update
 sudo apt-get install -yq git build-essential nodejs yarn docker-ce python-pip dotnet-sdk-2.1.4
 
-sudo usermod -aG docker \\$(whoami)
+sudo usermod -aG docker $(whoami)
 
 pip install --upgrade pip awscli
 
-echo 'export PATH="\\$(yarn global bin):\\$PATH"' >> .bashrc
+echo 'export PATH="$(yarn global bin):$PATH"' >> .bashrc
 yarn global add grunt-cli
 
-PATH="\\$(yarn global bin):\\$PATH"
+PATH="$(yarn global bin):$PATH"
 
 # https://github.com/docker/compose/releases
 # https://docs.docker.com/compose/install/#install-compose
@@ -65,10 +44,10 @@ cd /vagrant
 yarn install --no-bin-links
 
 
-echo dotnet \\$(dotnet --version)
-echo node \\$(node --version)
-echo npm \\$(npm --version)
-echo yarn \\$(yarn --version)
+echo dotnet $(dotnet --version)
+echo node $(node --version)
+echo npm $(npm --version)
+echo yarn $(yarn --version)
 grunt --version
 docker --version
 docker-compose --version
@@ -84,10 +63,6 @@ echo -e "\n"
 # https://www.alexkras.com/how-to-copy-one-file-from-vagrant-virtual-machine-to-local-host/
 # https://stackoverflow.com/questions/28471542/cant-ssh-to-vagrant-vms-using-the-insecure-private-key-vagrant-1-7-2
 echo "you almost certainly want to get your local ssh keys into this vagrant box for convenience: (run in host)"
-echo "scp -r -i .vagrant/machines/default/virtualbox/private_key -P 2222 ~/.ssh/id_rsa* ubuntu@127.0.0.1:/home/ubuntu/.ssh/"
+echo "scp -r -i .vagrant/machines/default/virtualbox/private_key -P 2222 ~/.ssh/id_rsa* vagrant@127.0.0.1:/home/vagrant/.ssh/"
 echo "if this is a vagrant re-install, you might also need to 'sed -i '' '6d' ~/.ssh/known_hosts' with the appropriate line per the error you get from running the above cmd"
 echo "or you can add an entry into your host ~/.ssh/config for 127.0.0.1 to use StrictHostKeyChecking=no"
-
-EOF
-  SHELL
-end
