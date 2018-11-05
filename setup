@@ -1,0 +1,4 @@
+wget https://raw.githubusercontent.com/rogusdev/vagrants/master/Vagrantfile
+wget https://raw.githubusercontent.com/rogusdev/vagrants/master/$1/setup_ubuntu.sh
+vagrant up
+vagrant ssh

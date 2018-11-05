@@ -2,6 +2,5 @@
 a collection of vagrant files I have used
 
 ## Usage
-wget https://raw.githubusercontent.com/rogusdev/vagrants/master/Vagrantfile
-# all, dotnet-core, rails, etc
-wget https://raw.githubusercontent.com/rogusdev/vagrants/master/all/setup_ubuntu.sh
+    curl -sL https://raw.githubusercontent.com/rogusdev/vagrants/master/setup | bash -s TYPE
+Where TYPE can be: `all`, `dotnet-core`, `rails`, etc -- the folders in this repo with `setup_ubuntu.sh` in them.
