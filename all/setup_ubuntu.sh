@@ -85,8 +85,8 @@ asdf plugin-add gradle https://github.com/rfrancis/asdf-gradle
 asdf list-all java
 #asdf install java oracle-11.0.1
 #asdf global java oracle-11.0.1
-asdf install java oracle-8.181
-asdf global java oracle-8.181
+asdf install java oracle-8.191
+asdf global java oracle-8.191
 asdf install gradle 4.10.2
 asdf global gradle 4.10.2
 
