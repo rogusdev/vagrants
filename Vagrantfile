@@ -15,8 +15,6 @@ Vagrant.configure("2") do |config|
 
     # https://groups.google.com/forum/#!topic/vagrant-up/eZljy-bddoI
     vb.customize [ "modifyvm", :id, "--uartmode1", "disconnected" ]
-    # https://stackoverflow.com/questions/45678817/error-etxtbsy-text-file-is-busy-on-npm-install
-    vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/vagrant", "1"]
   end
 
   # https://stackoverflow.com/questions/22547575/execute-commands-as-user-after-vagrant-provisioning
