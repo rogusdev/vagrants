@@ -111,6 +111,7 @@ python --version
 pip --version
 java -version
 gradle --version
+psql --version
 
 echo -e "\n\n"
 

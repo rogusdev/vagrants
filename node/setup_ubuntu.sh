@@ -73,6 +73,7 @@ docker-compose --version
 aws --version
 python --version
 pip --version
+psql --version
 
 echo -e "\n\n"
 

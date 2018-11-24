@@ -1,58 +1,67 @@
+#!/usr/bin/env bash
+
 # Enable truly non interactive apt-get installs
 export DEBIAN_FRONTEND=noninteractive
 
+sudo apt-get update
+sudo apt-get upgrade -yq
+sudo apt-get autoremove -yq
+
 echo -e "\ncd /vagrant" >> ~/.bashrc  # ubuntu
 
+sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
 
-curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
-
-curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
 
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable"
-
-curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/microsoft.gpg
-sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-xenial-prod xenial main" > /etc/apt/sources.list.d/dotnetdev.list' 
-
-sudo apt-get update
-sudo apt-get install -yq git build-essential nodejs yarn docker-ce python-pip dotnet-sdk-2.1.4
-
-sudo usermod -aG docker $(whoami)
-
-pip install --upgrade pip awscli
-
-echo 'export PATH="$(yarn global bin):$PATH"' >> .bashrc
-yarn global add grunt-cli
-
-PATH="$(yarn global bin):$PATH"
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 
 # https://github.com/docker/compose/releases
 # https://docs.docker.com/compose/install/#install-compose
-sudo curl -L https://github.com/docker/compose/releases/download/1.18.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+sudo curl -L "https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 
-# sudo curl -L https://raw.githubusercontent.com/docker/compose/1.18.0/contrib/completion/bash/docker-compose -o /etc/bash_completion.d/docker-compose
+sudo curl -L https://raw.githubusercontent.com/docker/compose/1.22.0/contrib/completion/bash/docker-compose -o /etc/bash_completion.d/docker-compose
 
-wget -qO- https://cli-assets.heroku.com/install-ubuntu.sh | sh
+sudo apt-get update
+sudo apt-get install -yq git build-essential libssl-dev libreadline-dev docker-ce postgresql-client libpq-dev pgadmin4
 
+sudo usermod -aG docker $(whoami)  # required for docker permissions! (you will need to restart your shell after this)
 
-cd /vagrant
+# https://github.com/rbenv/ruby-build/wiki#suggested-build-environment
+sudo apt-get install -yq autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm5 libgdbm-dev
 
-# no bin links for windows hosts
-#  https://github.com/rails/webpacker/issues/229
-yarn install --no-bin-links
+git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.6.0
+echo -e '\n. $HOME/.asdf/asdf.sh' >> ~/.bashrc
+echo -e '\n. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc
+. $HOME/.asdf/asdf.sh
+. $HOME/.asdf/completions/asdf.bash
+
+asdf plugin-add nodejs https://github.com/asdf-vm/asdf-nodejs.git
+bash ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
+asdf install nodejs 8.12.0
+asdf global nodejs 8.12.0
+# https://github.com/asdf-vm/asdf-nodejs/issues/31
+# https://yarnpkg.com/lang/en/docs/install/#alternatives-stable
+#  npm install of yarn is discouraged but doable
+npm install -g yarn
+
+# grunt installs fine after vm restart but not during first setup, assumedly PATH or something
+#yarn global add grunt-cli
+
+asdf plugin-add dotnet-core https://github.com/emersonsoares/asdf-dotnet-core.git
+asdf install dotnet-core 2.1.403
+asdf global dotnet-core 2.1.403
 
 
 echo dotnet $(dotnet --version)
 echo node $(node --version)
 echo npm $(npm --version)
 echo yarn $(yarn --version)
-grunt --version
 docker --version
 docker-compose --version
-heroku --version
-aws --version
+psql --version
 
 echo -e "\n\n"
 
