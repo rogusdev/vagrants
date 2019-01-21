@@ -32,7 +32,7 @@ sudo usermod -aG docker $(whoami)  # required for docker permissions! (you will 
 # https://github.com/rbenv/ruby-build/wiki#suggested-build-environment
 sudo apt-get install -yq autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm5 libgdbm-dev
 
-git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.6.0
+git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.6.3
 echo -e '\n. $HOME/.asdf/asdf.sh' >> ~/.bashrc
 echo -e '\n. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc
 . $HOME/.asdf/asdf.sh
@@ -40,8 +40,8 @@ echo -e '\n. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc
 
 asdf plugin-add nodejs https://github.com/asdf-vm/asdf-nodejs.git
 bash ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
-asdf install nodejs 8.12.0
-asdf global nodejs 8.12.0
+asdf install nodejs 10.15.0
+asdf global nodejs 10.15.0
 # https://github.com/asdf-vm/asdf-nodejs/issues/31
 # https://yarnpkg.com/lang/en/docs/install/#alternatives-stable
 #  npm install of yarn is discouraged but doable
@@ -50,9 +50,10 @@ npm install -g yarn
 # grunt installs fine after vm restart but not during first setup, assumedly PATH or something
 #yarn global add grunt-cli
 
+# https://github.com/dotnet/core/blob/master/release-notes/2.2/2.2.1/2.2.1-download.md
 asdf plugin-add dotnet-core https://github.com/emersonsoares/asdf-dotnet-core.git
-asdf install dotnet-core 2.1.403
-asdf global dotnet-core 2.1.403
+asdf install dotnet-core 2.2.103
+asdf global dotnet-core 2.2.103
 
 
 echo dotnet $(dotnet --version)

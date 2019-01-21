@@ -38,16 +38,17 @@ cd /tmp && curl http://download.redis.io/redis-stable.tar.gz | tar xz \
  && rm -rf /tmp/redis-stable && cd -
 
 
-git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.6.0
+git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.6.3
 echo -e '\n. $HOME/.asdf/asdf.sh' >> ~/.bashrc
 echo -e '\n. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc
 . $HOME/.asdf/asdf.sh
 . $HOME/.asdf/completions/asdf.bash
 
+# https://nodejs.org/en/download/
 asdf plugin-add nodejs https://github.com/asdf-vm/asdf-nodejs.git
 bash ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
-asdf install nodejs 8.12.0
-asdf global nodejs 8.12.0
+asdf install nodejs 10.15.0
+asdf global nodejs 10.15.0
 # https://github.com/asdf-vm/asdf-nodejs/issues/31
 # https://yarnpkg.com/lang/en/docs/install/#alternatives-stable
 #  npm install of yarn is discouraged but doable
@@ -56,19 +57,21 @@ npm install -g yarn
 # grunt installs fine after vm restart but not during first setup, assumedly PATH or something
 #yarn global add grunt-cli
 
+# https://www.ruby-lang.org/en/downloads/
 asdf plugin-add ruby https://github.com/asdf-vm/asdf-ruby.git
-asdf install ruby 2.5.1
-asdf global ruby 2.5.1
+asdf install ruby 2.6.0
+asdf global ruby 2.6.0
 gem install bundler
 
 # https://github.com/pyenv/pyenv/wiki#suggested-build-environment
 sudo apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl libncurses5-dev xz-utils libxml2-dev libxmlsec1-dev libffi-dev
 # tk-dev llvm
 
+# https://www.python.org/downloads/
 asdf plugin-add python https://github.com/tuvistavie/asdf-python.git
 asdf install python 2.7.15
-asdf install python 3.7.0
-asdf global python 3.7.0 2.7.15
+asdf install python 3.7.2
+asdf global python 3.7.2 2.7.15
 pip install --upgrade pip
 
 pip install --upgrade pip awscli
@@ -80,19 +83,20 @@ echo -e '\nJAVA_OPTS="--add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=ja
 
 sudo apt-get install -yq unzip  # need unzip for gradle install
 
+# https://github.com/rfrancis/asdf-gradle/blob/master/bin/list-all
+# https://gradle.org/releases/
 asdf plugin-add java
 asdf plugin-add gradle https://github.com/rfrancis/asdf-gradle
 asdf list-all java
-#asdf install java oracle-11.0.1
-#asdf global java oracle-11.0.1
-asdf install java oracle-8.191
-asdf global java oracle-8.191
-asdf install gradle 4.10.2
-asdf global gradle 4.10.2
+asdf install java openjdk-11.0.1
+asdf global java openjdk-11.0.1
+asdf install gradle 5.1.1
+asdf global gradle 5.1.1
 
+# https://github.com/dotnet/core/blob/master/release-notes/2.2/2.2.1/2.2.1-download.md
 asdf plugin-add dotnet-core https://github.com/emersonsoares/asdf-dotnet-core.git
-asdf install dotnet-core 2.1.403
-asdf global dotnet-core 2.1.403
+asdf install dotnet-core 2.2.103
+asdf global dotnet-core 2.2.103
 
 
 wget -qO- https://cli-assets.heroku.com/install-ubuntu.sh | sh

@@ -35,16 +35,17 @@ cd /tmp && curl http://download.redis.io/redis-stable.tar.gz | tar xz \
  && rm -rf /tmp/redis-stable && cd -
 
 
-git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.6.0
+git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.6.3
 echo -e '\n. $HOME/.asdf/asdf.sh' >> ~/.bashrc
 echo -e '\n. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc
 . $HOME/.asdf/asdf.sh
 . $HOME/.asdf/completions/asdf.bash
 
+# https://nodejs.org/en/download/
 asdf plugin-add nodejs https://github.com/asdf-vm/asdf-nodejs.git
 bash ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
-asdf install nodejs 8.12.0
-asdf global nodejs 8.12.0
+asdf install nodejs 10.15.0
+asdf global nodejs 10.15.0
 # https://github.com/asdf-vm/asdf-nodejs/issues/31
 # https://yarnpkg.com/lang/en/docs/install/#alternatives-stable
 #  npm install of yarn is discouraged but doable
@@ -58,8 +59,8 @@ sudo apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev li
 # tk-dev llvm
 
 asdf plugin-add python https://github.com/tuvistavie/asdf-python.git
-asdf install python 3.7.0
-asdf global python 3.7.0
+asdf install python 3.7.2
+asdf global python 3.7.2
 pip install --upgrade pip awscli
 # https://github.com/asdf-vm/asdf/issues/107
 asdf reshim python

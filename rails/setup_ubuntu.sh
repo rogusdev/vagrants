@@ -4,13 +4,13 @@ export DEBIAN_FRONTEND=noninteractive
 echo -e "\ncd /vagrant" >> ~/.bashrc  # ubuntu
 
 
-curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
 
 curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
 echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
 
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable"
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 
 sudo apt-get update
 sudo apt-get install -yq git build-essential imagemagick phantomjs libmagickwand-dev libcurl4-openssl-dev nodejs yarn docker-ce python2.7 python-pip
@@ -31,8 +31,8 @@ PATH="$(pwd)/.rbenv/bin:$PATH"
 eval "$(rbenv init -)"
 
 sudo apt-get install -yq libssl-dev libreadline-dev
-rbenv install 2.4.1
-rbenv global 2.4.1
+rbenv install 2.6.0
+rbenv global 2.6.0
 gem install bundler
 
 sudo ln -s /usr/lib/x86_64-linux-gnu/ImageMagick-6.8.9/bin-Q16/Magick-config /usr/bin/Magick-config
