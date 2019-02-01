@@ -98,6 +98,11 @@ asdf plugin-add dotnet-core https://github.com/emersonsoares/asdf-dotnet-core.gi
 asdf install dotnet-core 2.2.103
 asdf global dotnet-core 2.2.103
 
+# https://golang.org/dl/
+asdf plugin-add golang https://github.com/kennyp/asdf-golang.git
+asdf install golang 1.11.5
+asdf global golang 1.11.5
+
 
 wget -qO- https://cli-assets.heroku.com/install-ubuntu.sh | sh
 
@@ -116,6 +121,7 @@ pip --version
 java -version
 gradle --version
 psql --version
+go version
 
 echo -e "\n\n"
 
