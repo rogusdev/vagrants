@@ -39,10 +39,8 @@ cd /tmp && curl http://download.redis.io/redis-stable.tar.gz | tar xz \
 
 
 git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.6.3
-echo -e '\n. $HOME/.asdf/asdf.sh' >> ~/.bashrc
-echo -e '\n. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc
-. $HOME/.asdf/asdf.sh
-. $HOME/.asdf/completions/asdf.bash
+echo -e '\nsource $HOME/.asdf/asdf.sh && source $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc
+source $HOME/.asdf/asdf.sh && source $HOME/.asdf/completions/asdf.bash
 
 # https://nodejs.org/en/download/
 asdf plugin-add nodejs https://github.com/asdf-vm/asdf-nodejs.git
@@ -102,6 +100,7 @@ asdf global dotnet-core 2.2.103
 asdf plugin-add golang https://github.com/kennyp/asdf-golang.git
 asdf install golang 1.11.5
 asdf global golang 1.11.5
+echo -e '\nGOPATH=$HOME/go' >> ~/.bashrc
 
 
 wget -qO- https://cli-assets.heroku.com/install-ubuntu.sh | sh
