@@ -7,7 +7,7 @@ Vagrant.configure("2") do |config|
   config.vm.box_version = "201812.27.0"
   config.vm.box_check_update = false
 
-  for port in [3000, 3001, 4200, 8080] + (5000..5010).to_a
+  for port in [80, 3000, 3001, 4200, 8080] + (5000..5010).to_a
     config.vm.network "forwarded_port", guest: port, host: port, host_ip: "127.0.0.1"
   end
 
