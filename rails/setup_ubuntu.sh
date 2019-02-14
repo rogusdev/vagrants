@@ -1,8 +1,9 @@
+#!/usr/bin/env bash
+
 # Enable truly non interactive apt-get installs
 export DEBIAN_FRONTEND=noninteractive
 
 echo -e "\ncd /vagrant" >> ~/.bashrc  # ubuntu
-
 
 curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
 

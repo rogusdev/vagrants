@@ -3,10 +3,6 @@
 # Enable truly non interactive apt-get installs
 export DEBIAN_FRONTEND=noninteractive
 
-sudo apt-get update
-sudo apt-get upgrade -yq
-sudo apt-get autoremove -yq
-
 echo -e "\ncd /vagrant" >> ~/.bashrc  # ubuntu
 
 sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
