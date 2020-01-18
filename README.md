@@ -9,11 +9,11 @@ Where TYPE can be: `all`, `dotnet-core`, `rails`, etc -- the folders in this rep
 
 On Windows, install with Chocolatey: https://chocolatey.org/
 
-    choco install virtualbox vagrant
+    choco upgrade -y virtualbox vagrant
 
 On OS X, install with Brew: https://brew.sh/
 
-    brew cask install virtualbox vagrant
+    brew cask upgrade virtualbox vagrant
 
 Or manually install VirtualBox: https://www.virtualbox.org/wiki/Downloads
 
