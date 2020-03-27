@@ -145,8 +145,8 @@ asdf global terraform 0.12.12
 
 
 asdf plugin-add helm https://github.com/Antiarchitect/asdf-helm.git
-asdf install helm 2.14.3
-asdf global helm 2.14.3
+asdf install helm 2.16.5
+asdf global helm 2.16.5
 
 
 asdf plugin-add kubectl https://github.com/Banno/asdf-kubectl.git
