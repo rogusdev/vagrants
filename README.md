@@ -23,4 +23,4 @@ Then manually install Vagrant: https://www.vagrantup.com/downloads.html
 
 ## Clean up / Upgrading
 
-    rm -rf setup_ubuntu.sh Vagrantfile .vagrant
+    vagrant destroy -f && rm -rf setup_ubuntu.sh Vagrantfile .vagrant
