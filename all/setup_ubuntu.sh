@@ -5,41 +5,39 @@ export DEBIAN_FRONTEND=noninteractive
 
 echo -e "\ncd /vagrant" >> ~/.bashrc  # ubuntu
 
-sudo apt-get install -yq apt-transport-https ca-certificates curl software-properties-common
+# grub-pc ignores noninteractive env var so really force it ala
+#  https://github.com/chef/bento/issues/661#issuecomment-248136601
+sudo apt-get update && sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
+sudo apt-get install -yq git linux-headers-$(uname -r) build-essential libssl-dev libreadline-dev
+
+
+sudo apt-get install -yq apt-transport-https ca-certificates curl gnupg-agent software-properties-common
 
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+
 # https://github.com/docker/compose/releases
 # https://docs.docker.com/compose/install/#install-compose
-sudo curl -L "https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo curl -L "https://github.com/docker/compose/releases/download/1.24.5/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 
-sudo curl -L https://raw.githubusercontent.com/docker/compose/1.22.0/contrib/completion/bash/docker-compose -o /etc/bash_completion.d/docker-compose
-
-sudo apt-get update
-sudo apt-get install -yq git linux-headers-$(uname -r) build-essential libssl-dev libreadline-dev docker-ce
-sudo apt-get install -yq unzip
-sudo apt-get install -yq dirmngr gpg  # nodejs
-
-#libpq-dev pgadmin4
+sudo curl -L https://raw.githubusercontent.com/docker/compose/1.24.5/contrib/completion/bash/docker-compose -o /etc/bash_completion.d/docker-compose
 
 sudo usermod -aG docker $(whoami)  # required for docker permissions! (you will need to restart your shell after this)
 
 
-# https://stackoverflow.com/a/25873663/310221
-cd /tmp && curl http://download.redis.io/redis-stable.tar.gz | tar xz \
- && make -C redis-stable redis-cli && sudo cp redis-stable/src/redis-cli /usr/local/bin \
- && rm -rf /tmp/redis-stable && cd -
-
-
 
 git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.7.8
-asdf update
 
+# https://unix.stackexchange.com/a/419059/83622
 ASDF_BASH_SOURCE='source $HOME/.asdf/asdf.sh && source $HOME/.asdf/completions/asdf.bash'
-echo -e “\n$ASDF_BASH_SOURCE” >> ~/.bashrc
-$(eval $ASDF_BASH_SOURCE)
+echo -e "\n$ASDF_BASH_SOURCE" >> $HOME/.bashrc
+$(eval echo "$ASDF_BASH_SOURCE")
+
+asdf update
 
 
 # https://asdf-vm.com/#/core-configuration?id=homeasdfrc
@@ -165,6 +163,7 @@ asdf global sops v3.5.0
 
 
 
+sudo apt-get install -yq unzip
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip && sudo ./aws/install
 
 
@@ -185,6 +184,16 @@ asdf global elixir 1.10
 
 
 
+
+
+# https://stackoverflow.com/a/25873663/310221
+cd /tmp && curl http://download.redis.io/redis-stable.tar.gz | tar xz \
+ && make -C redis-stable redis-cli && sudo cp redis-stable/src/redis-cli /usr/local/bin \
+ && rm -rf /tmp/redis-stable && cd -
+
+
+
+
 # linux postgres + redis
 sudo apt install -yq linux-headers-$(uname -r) build-essential
 
@@ -194,6 +203,8 @@ sudo apt install -yq libreadline-dev zlib1g-dev curl
 asdf plugin-add postgres
 asdf install postgres 12.2
 asdf global postgres 12.2
+
+sudo apt-get install -yq libpq-dev pgadmin4
 
 
 asdf plugin-add redis https://github.com/smashedtoatoms/asdf-redis.git
@@ -213,14 +224,13 @@ asdf global elasticsearch 7.6.1
 
 
 
-wget -qO- https://cli-assets.heroku.com/install-ubuntu.sh | sh
+curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
 
 
 echo dotnet $(dotnet --version)
 echo node $(node --version)
 echo npm $(npm --version)
 echo yarn $(yarn --version)
-#grunt --version
 docker --version
 docker-compose --version
 aws --version
@@ -231,6 +241,10 @@ java -version
 gradle --version
 psql --version
 go version
+rust --version
+erlang --version
+elixir --version
+heroku --version
 
 echo -e "\n\n"
 
