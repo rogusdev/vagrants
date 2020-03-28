@@ -19,3 +19,8 @@ Or manually install VirtualBox: https://www.virtualbox.org/wiki/Downloads
 
 Then manually install Vagrant: https://www.vagrantup.com/downloads.html
  (Vagrant is a wrapper around VirtualBox and so requires it)
+
+
+## Clean up / Upgrading
+
+    rm -rf setup_ubuntu.sh Vagrantfile .vagrant
