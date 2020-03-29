@@ -3,7 +3,8 @@
 # Enable truly non interactive apt-get installs
 export DEBIAN_FRONTEND=noninteractive
 
-echo -e "\ncd /vagrant" >> ~/.bashrc  # ubuntu
+PROFILE_FILE=$HOME/.bashrc  # ubuntu
+echo -e "\ncd /vagrant" >> $PROFILE_FILE
 
 # grub-pc ignores noninteractive env var so really force it ala
 #  https://github.com/chef/bento/issues/661#issuecomment-248136601
@@ -25,12 +26,13 @@ sudo apt-get install -yq docker-ce docker-ce-cli containerd.io
 sudo usermod -aG docker $(whoami)  # required for docker permissions! (you will need to restart your shell after this)
 
 
-
-git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.7.8
+HOME_ASDF='$HOME/.asdf'
+ASDF_DIR=$(eval echo "$HOME_ASDF")
+git clone https://github.com/asdf-vm/asdf.git $ASDF_DIR --branch v0.7.8
 
 # https://unix.stackexchange.com/a/419059/83622
-ASDF_BASH_SOURCE='source $HOME/.asdf/asdf.sh && source $HOME/.asdf/completions/asdf.bash'
-echo -e "\n$ASDF_BASH_SOURCE" >> $HOME/.bashrc
+ASDF_BASH_SOURCE="source $HOME_ASDF/asdf.sh && source $HOME_ASDF/completions/asdf.bash"
+echo -e "\n$ASDF_BASH_SOURCE" >> $PROFILE_FILE
 $(eval echo "$ASDF_BASH_SOURCE")
 
 asdf update
@@ -56,7 +58,7 @@ VERSION_RUBY=2.6.5
 VERSION_PYTHON2=2.7.17
 VERSION_PYTHON3=3.8.2
 VERSION_BAZEL=2.2.0
-VERSION_TERRAFORM=0.12.14
+VERSION_TERRAFORM=0.12.24
 VERSION_HELM=2.16.5
 VERSION_KUBECTL=1.16.7
 VERSION_KOPS=v1.16.0
@@ -81,6 +83,8 @@ sudo curl -L https://raw.githubusercontent.com/docker/compose/$VERSION_DOCKER_CO
 asdf plugin-add rust https://github.com/code-lever/asdf-rust.git
 asdf install rust $VERSION_RUST
 asdf global rust $VERSION_RUST
+# echo -e "\nsource $HOME_ASDF/installs/rust/$VERSION_RUST/env" >> $PROFILE_FILE
+# echo -e "\nsource $HOME_ASDF/installs/rust/$VERSION_RUST/bin" >> $PROFILE_FILE
 
 
 # https://github.com/dotnet/core/tree/master/release-notes
@@ -93,15 +97,15 @@ asdf global dotnet-core $VERSION_DOTNET_CORE
 asdf plugin-add golang https://github.com/kennyp/asdf-golang.git
 asdf install golang $VERSION_GOLANG
 asdf global golang $VERSION_GOLANG
-# echo -e '\nGOPATH=$HOME/go' >> ~/.bashrc
+# echo -e '\nGOPATH=$HOME/go' >> $PROFILE_FILE
 asdf reshim golang
 
 
 # bash JAVA_HOME
-echo -e "\nsource ~/.asdf/plugins/java/set-java-home.sh" >> ~/.bashrc
+echo -e "\nsource $HOME_ASDF/plugins/java/set-java-home.sh" >> $PROFILE_FILE
 
 # fish JAVA_HOME
-#source ~/.asdf/plugins/java/set-java-home.fish
+#echo -e "\nsource $HOME_ASDF/plugins/java/set-java-home.fish" >> $PROFILE_FILE
 
 asdf plugin-add java https://github.com/halcyon/asdf-java.git
 asdf install java $VERSION_JAVA
@@ -123,7 +127,7 @@ asdf global gradle $VERSION_GRADLE
 #brew install coreutils gpg
 
 asdf plugin-add nodejs https://github.com/asdf-vm/asdf-nodejs.git
-bash ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
+bash $ASDF_DIR/plugins/nodejs/bin/import-release-team-keyring
 asdf install nodejs $VERSION_NODEJS
 asdf global nodejs $VERSION_NODEJS
 asdf reshim nodejs
@@ -194,7 +198,10 @@ asdf global sops $VERSION_SOPS
 
 
 
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && unzip awscliv2.zip && sudo ./aws/install
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o $HOME/awscliv2.zip \
+ && unzip -uq $HOME/awscliv2.zip -d $HOME \
+ && sudo $HOME/aws/install --update \
+ && rm -rf $HOME/aws*
 
 
 
@@ -264,21 +271,20 @@ docker-compose --version
 aws --version
 ruby --version
 python --version
-python2 --version
-python3 --version
+echo python2 $(python2 --version)
+echo python3 $(python3 --version)
 pip --version
 java -version
 gradle --version
-psql --version
 go version
 rustc --version
 # erlang --version
 # elixir --version
 heroku --version
 terraform --version
-helm version
+echo helm $(helm version)
 kubectl version
-kops version
+echo kops $(kops version)
 sops --version
 redis-cli --version
 psql --version
