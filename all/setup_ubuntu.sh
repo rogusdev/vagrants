@@ -115,6 +115,7 @@ asdf global gradle $VERSION_GRADLE
 #brew install coreutils gpg
 
 asdf plugin-add nodejs https://github.com/asdf-vm/asdf-nodejs.git
+# https://stackoverflow.com/a/56048545/310221 -- if dirmngr errors
 bash $ASDF_DIR/plugins/nodejs/bin/import-release-team-keyring
 asdf install nodejs $VERSION_NODEJS
 asdf global nodejs $VERSION_NODEJS
