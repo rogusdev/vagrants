@@ -8,22 +8,15 @@ echo -e "\ncd /vagrant" >> $PROFILE_FILE
 
 # grub-pc ignores noninteractive env var so really force it ala
 #  https://github.com/chef/bento/issues/661#issuecomment-248136601
+#sudo apt-get update && sudo apt-get upgrade -y
 sudo apt-get update && sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
-sudo apt-get install -yq git linux-headers-$(uname -r) build-essential libssl-dev libreadline-dev
+sudo apt-get install -yq git build-essential libssl-dev libreadline-dev  # linux-headers-$(uname -r)
 
 # jq required for parsing github releases lists, unzip for a bunch, libcurl + zlib for C# -- libpng just in case
 sudo apt-get install -yq jq unzip libcurl4 libcurl4-openssl-dev zlib1g-dev libpng-dev
 
-
+# add-apt-repository
 sudo apt-get install -yq apt-transport-https ca-certificates curl gnupg-agent software-properties-common
-
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-
-sudo apt-get update
-sudo apt-get install -yq docker-ce docker-ce-cli containerd.io
-
-sudo usermod -aG docker $(whoami)  # required for docker permissions! (you will need to restart your shell after this)
 
 
 HOME_ASDF='$HOME/.asdf'
@@ -73,18 +66,12 @@ VERSION_ELASTICSEARCH=7.6.1
 
 
 
-asdf plugin-add docker-compose https://github.com/virtualstaticvoid/asdf-docker-compose.git
-asdf install docker-compose $VERSION_DOCKER_COMPOSE
-asdf global docker-compose $VERSION_DOCKER_COMPOSE
-
-sudo curl -L https://raw.githubusercontent.com/docker/compose/$VERSION_DOCKER_COMPOSE/contrib/completion/bash/docker-compose -o /etc/bash_completion.d/docker-compose
 
 
 asdf plugin-add rust https://github.com/code-lever/asdf-rust.git
 asdf install rust $VERSION_RUST
 asdf global rust $VERSION_RUST
-# echo -e "\nsource $HOME_ASDF/installs/rust/$VERSION_RUST/env" >> $PROFILE_FILE
-# echo -e "\nsource $HOME_ASDF/installs/rust/$VERSION_RUST/bin" >> $PROFILE_FILE
+# do NOT add to PATH per the installation instructions -- asdf shim handles that!
 
 
 # https://github.com/dotnet/core/tree/master/release-notes
@@ -97,7 +84,8 @@ asdf global dotnet-core $VERSION_DOTNET_CORE
 asdf plugin-add golang https://github.com/kennyp/asdf-golang.git
 asdf install golang $VERSION_GOLANG
 asdf global golang $VERSION_GOLANG
-# echo -e '\nGOPATH=$HOME/go' >> $PROFILE_FILE
+echo -e '\nexport GOPATH="$(go env GOPATH)"' >> $PROFILE_FILE
+
 asdf reshim golang
 
 
@@ -140,7 +128,7 @@ asdf global yarn $VERSION_YARN
 
 # linux ruby-build
 # https://github.com/rbenv/ruby-build/wiki#suggested-build-environment
-sudo apt-get install -yq autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm6 libgdbm-dev
+sudo apt-get install -yq autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm-dev  # libgdbm6
 
 # mac ruby-build
 #brew install openssl libyaml libffi
@@ -225,9 +213,9 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o $HOME/awscliv
 
 
 # https://stackoverflow.com/a/25873663/310221
-cd /tmp && curl http://download.redis.io/redis-stable.tar.gz | tar xz \
- && make -C redis-stable redis-cli && sudo cp redis-stable/src/redis-cli /usr/local/bin \
- && rm -rf /tmp/redis-stable && cd -
+# cd /tmp && curl http://download.redis.io/redis-stable.tar.gz | tar xz \
+#  && make -C redis-stable redis-cli && sudo cp redis-stable/src/redis-cli /usr/local/bin \
+#  && rm -rf /tmp/redis-stable && cd -
 
 # or alternatively use netcat for redis client:
 #nc -v --ssl redis.mydomain.com 6380
@@ -262,6 +250,28 @@ cd /tmp && curl http://download.redis.io/redis-stable.tar.gz | tar xz \
 curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
 
 
+
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+sudo apt-get update
+sudo apt-get install -yq docker-ce docker-ce-cli containerd.io
+
+sudo usermod -aG docker $(whoami)  # required for docker permissions! (you will need to restart your shell after this)
+
+
+
+asdf plugin-add docker-compose https://github.com/virtualstaticvoid/asdf-docker-compose.git
+asdf install docker-compose $VERSION_DOCKER_COMPOSE
+asdf global docker-compose $VERSION_DOCKER_COMPOSE
+
+sudo curl -L https://raw.githubusercontent.com/docker/compose/$VERSION_DOCKER_COMPOSE/contrib/completion/bash/docker-compose -o /etc/bash_completion.d/docker-compose
+
+
+
+
+echo asdf $(asdf --version)
 echo dotnet $(dotnet --version)
 echo node $(node --version)
 echo npm $(npm --version)
