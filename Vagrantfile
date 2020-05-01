@@ -3,8 +3,8 @@
 
 Vagrant.configure("2") do |config|
   # https://www.vagrantup.com/docs/boxes.html#official-boxes
-  config.vm.box = "bento/ubuntu-18.04"
-  config.vm.box_version = "202003.31.0"
+  config.vm.box = "bento/ubuntu-20.04"
+  config.vm.box_version = "202004.27.0"
   config.vm.box_check_update = false
 
   for port in [3000, 3001, 4200, 8080] + (5000..5010).to_a
@@ -13,7 +13,7 @@ Vagrant.configure("2") do |config|
   config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
 
   config.vm.provider "virtualbox" do |vb|
-    vb.memory = 2048
+    vb.memory = 4096
 
     # https://groups.google.com/forum/#!topic/vagrant-up/eZljy-bddoI
     vb.customize [ "modifyvm", :id, "--uartmode1", "disconnected" ]
