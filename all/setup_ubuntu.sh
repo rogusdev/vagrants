@@ -90,7 +90,7 @@ asdf reshim golang
 
 
 # bash JAVA_HOME
-echo -e "\nsource $HOME_ASDF/plugins/java/set-java-home.sh" >> $PROFILE_FILE
+echo -e "\nsource $HOME_ASDF/plugins/java/set-java-home.bash" >> $PROFILE_FILE
 
 # fish JAVA_HOME
 #echo -e "\nsource $HOME_ASDF/plugins/java/set-java-home.fish" >> $PROFILE_FILE
