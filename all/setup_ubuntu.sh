@@ -12,6 +12,10 @@ echo -e "\ncd /vagrant" >> $PROFILE_FILE
 sudo apt-get update && sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
 sudo apt-get install -yq git build-essential libssl-dev libreadline-dev  # linux-headers-$(uname -r)
 
+# https://www.tecmint.com/change-a-users-default-shell-in-linux/
+sudo apt-get -yq install zsh fish && cat /etc/shells
+#cat /etc/passwd && sudo chsh -s /usr/bin/fish vagrant && cat /etc/passwd
+
 # jq required for parsing github releases lists, unzip for a bunch, libcurl + zlib for C# -- libpng just in case
 sudo apt-get install -yq jq unzip libcurl4 libcurl4-openssl-dev zlib1g-dev libpng-dev
 
