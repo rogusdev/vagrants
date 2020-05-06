@@ -14,8 +14,8 @@ sudo apt-get install -yq git build-essential libssl-dev libreadline-dev  # linux
 
 # https://www.tecmint.com/change-a-users-default-shell-in-linux/
 sudo apt-get -yq install zsh fish && cat /etc/shells
-sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --unattended
-curl -L https://get.oh-my.fish | fish --noninteractive
+curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh > install_omz && sh install_omz --unattended && rm install_omz
+curl -L https://get.oh-my.fish > install_omf && fish install_omf --noninteractive && rm install_omf
 #cat /etc/passwd && sudo chsh -s /usr/bin/fish vagrant && cat /etc/passwd
 
 # jq required for parsing github releases lists, unzip for a bunch, libcurl + zlib for C# -- libpng just in case
