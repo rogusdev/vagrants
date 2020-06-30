@@ -91,7 +91,6 @@ asdf plugin-add golang https://github.com/kennyp/asdf-golang.git
 asdf install golang $VERSION_GOLANG
 asdf global golang $VERSION_GOLANG
 echo -e '\nexport GOPATH="$(go env GOPATH)"' >> $PROFILE_FILE
-
 asdf reshim golang
 
 
@@ -143,8 +142,8 @@ sudo apt-get install -yq autoconf bison build-essential libssl-dev libyaml-dev l
 asdf plugin-add ruby https://github.com/asdf-vm/asdf-ruby.git
 asdf install ruby $VERSION_RUBY
 asdf global ruby $VERSION_RUBY
-gem install bundler
 asdf reshim ruby
+gem install bundler
 
 
 # linux python dependencies
@@ -156,8 +155,8 @@ asdf plugin-add python
 asdf install python $VERSION_PYTHON2
 asdf install python $VERSION_PYTHON3
 asdf global python $VERSION_PYTHON3 $VERSION_PYTHON2
-pip install --upgrade pip
 asdf reshim python
+pip install --upgrade pip
 
 
 asdf plugin-add bazel https://github.com/rajatvig/asdf-bazel.git
