@@ -49,7 +49,9 @@ VERSION_DOCKER_COMPOSE=1.27.3
 VERSION_RUST=1.46.0
 VERSION_DOTNET_CORE=3.1.402
 VERSION_GOLANG=1.15.2
-VERSION_JAVA=azul-zulu-11.39.15-jdk11.0.7
+# https://adoptopenjdk.net/ vs https://aws.amazon.com/corretto/ vs https://www.azul.com/downloads/zulu/
+# hotspot vs openj9: https://www.ojalgo.org/2019/02/quick-test-to-compare-hotspot-and-openj9/
+VERSION_JAVA=adoptopenjdk-11.0.8+10
 VERSION_GRADLE=6.6.1
 VERSION_NODEJS=14.11.0
 VERSION_YARN=1.22.5
@@ -235,6 +237,31 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o $HOME/awscliv
 
 
 
+curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
+
+
+
+
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+sudo apt-get update
+sudo apt-get install -yq docker-ce docker-ce-cli containerd.io
+
+sudo usermod -aG docker $(whoami)  # required for docker permissions! (you will need to restart your shell after this)
+
+
+
+asdf plugin-add docker-compose https://github.com/virtualstaticvoid/asdf-docker-compose.git
+asdf install docker-compose $VERSION_DOCKER_COMPOSE
+asdf global docker-compose $VERSION_DOCKER_COMPOSE
+
+sudo curl -L https://raw.githubusercontent.com/docker/compose/$VERSION_DOCKER_COMPOSE/contrib/completion/bash/docker-compose -o /etc/bash_completion.d/docker-compose
+
+
+
+
 docker network create www
 
 docker rm -f postgres-www
@@ -269,29 +296,6 @@ docker run -d --restart=always --network=www \
   -e "discovery.type=single-node" \
   --name elasticsearch-www elasticsearch:$DOCKER_ELASTICSEARCH
 
-
-
-
-curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
-
-
-
-
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-
-sudo apt-get update
-sudo apt-get install -yq docker-ce docker-ce-cli containerd.io
-
-sudo usermod -aG docker $(whoami)  # required for docker permissions! (you will need to restart your shell after this)
-
-
-
-asdf plugin-add docker-compose https://github.com/virtualstaticvoid/asdf-docker-compose.git
-asdf install docker-compose $VERSION_DOCKER_COMPOSE
-asdf global docker-compose $VERSION_DOCKER_COMPOSE
-
-sudo curl -L https://raw.githubusercontent.com/docker/compose/$VERSION_DOCKER_COMPOSE/contrib/completion/bash/docker-compose -o /etc/bash_completion.d/docker-compose
 
 
 
