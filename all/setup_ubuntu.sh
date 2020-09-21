@@ -11,6 +11,7 @@ echo -e "\ncd /vagrant" >> $PROFILE_FILE
 #sudo apt-get update && sudo apt-get upgrade -y
 sudo apt-get update && sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
 sudo apt-get install -yq git curl build-essential libssl-dev libreadline-dev  # linux-headers-$(uname -r)
+sudo apt-get autoremove -y
 
 # https://www.tecmint.com/change-a-users-default-shell-in-linux/
 sudo apt-get -yq install zsh fish && cat /etc/shells
@@ -244,6 +245,7 @@ curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
 
 
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+# NOTE: this will fail to install in elementary os and other ubuntu derivatives, instead use lsb_release -ucs (upstream codename)
 sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 
 sudo apt-get update
