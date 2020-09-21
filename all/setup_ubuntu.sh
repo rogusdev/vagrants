@@ -10,7 +10,7 @@ echo -e "\ncd /vagrant" >> $PROFILE_FILE
 #  https://github.com/chef/bento/issues/661#issuecomment-248136601
 #sudo apt-get update && sudo apt-get upgrade -y
 sudo apt-get update && sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
-sudo apt-get install -yq git build-essential libssl-dev libreadline-dev  # linux-headers-$(uname -r)
+sudo apt-get install -yq git curl build-essential libssl-dev libreadline-dev  # linux-headers-$(uname -r)
 
 # https://www.tecmint.com/change-a-users-default-shell-in-linux/
 sudo apt-get -yq install zsh fish && cat /etc/shells
@@ -45,29 +45,31 @@ EOF
 
 
 
-VERSION_DOCKER_COMPOSE=1.25.4
-VERSION_RUST=1.42.0
-VERSION_DOTNET_CORE=3.1.201
-VERSION_GOLANG=1.14.1
-VERSION_JAVA=azul-zulu-11.37.17-jdk11.0.6
-VERSION_GRADLE=6.3
-VERSION_NODEJS=12.16.1
-VERSION_YARN=1.22.4
-VERSION_RUBY=2.6.5
-VERSION_PYTHON2=2.7.17
-VERSION_PYTHON3=3.8.2
-VERSION_BAZEL=2.2.0
-VERSION_TERRAFORM=0.12.24
-VERSION_HELM=2.16.5
-VERSION_KUBECTL=1.16.7
-VERSION_KOPS=v1.16.0
-VERSION_SOPS=v3.5.0
+VERSION_DOCKER_COMPOSE=1.27.3
+VERSION_RUST=1.46.0
+VERSION_DOTNET_CORE=3.1.402
+VERSION_GOLANG=1.15.2
+VERSION_JAVA=azul-zulu-11.39.15-jdk11.0.7
+VERSION_GRADLE=6.6.1
+VERSION_NODEJS=14.11.0
+VERSION_YARN=1.22.5
+VERSION_RUBY=2.7.1
+VERSION_PYTHON2=2.7.18
+VERSION_PYTHON=3.8.5
+VERSION_BAZEL=3.5.0
+VERSION_TERRAFORM=0.13.3
+VERSION_HELM2=2.16.12
+VERSION_HELM=3.3.3
+VERSION_KUBECTL=1.19.2
+VERSION_KOPS=v1.18.1
+VERSION_SOPS=v3.6.1
 VERSION_ERLANG=22.3
 VERSION_ELIXIR=1.10
-VERSION_POSTGRES=12.2
-VERSION_REDIS=5.0.8
-VERSION_MONGODB=4.2.5
-VERSION_ELASTICSEARCH=7.6.1
+
+DOCKER_POSTGRES=12.4-alpine
+DOCKER_REDIS=6.0.8-buster
+DOCKER_MONGO=4.4.1-bionic
+DOCKER_ELASTICSEARCH=7.9.1
 
 
 
@@ -153,8 +155,8 @@ sudo apt-get install -yq --no-install-recommends make build-essential libssl-dev
 # https://www.python.org/downloads/
 asdf plugin-add python
 asdf install python $VERSION_PYTHON2
-asdf install python $VERSION_PYTHON3
-asdf global python $VERSION_PYTHON3 $VERSION_PYTHON2
+asdf install python $VERSION_PYTHON
+asdf global python $VERSION_PYTHON $VERSION_PYTHON2
 asdf reshim python
 pip install --upgrade pip
 
@@ -172,8 +174,9 @@ asdf global terraform $VERSION_TERRAFORM
 
 
 asdf plugin-add helm https://github.com/Antiarchitect/asdf-helm.git
+asdf install helm $VERSION_HELM2
 asdf install helm $VERSION_HELM
-asdf global helm $VERSION_HELM
+asdf global helm $VERSION_HELM $VERSION_HELM2
 
 
 asdf plugin-add kubectl https://github.com/Banno/asdf-kubectl.git
@@ -230,25 +233,41 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o $HOME/awscliv
 # sudo apt-get install -yq libpq-dev pgadmin4 postgresql-client mongodb-org-tools
 
 
-# asdf plugin-add postgres
-# asdf install postgres $VERSION_POSTGRES
-# asdf global postgres $VERSION_POSTGRES
 
 
-# asdf plugin-add redis https://github.com/smashedtoatoms/asdf-redis.git
-# asdf install redis $VERSION_REDIS
-# asdf global redis $VERSION_REDIS
+docker network create www
 
+docker rm -f postgres-www
+docker rm -f redis-www
+docker rm -f mongo-www
+docker rm -f elasticsearch-www
 
-# mongo asdf plugin not working as of 2020-03-29
-# asdf plugin-add mongodb https://github.com/sylph01/asdf-mongodb.git
-# asdf install mongodb $VERSION_MONGODB
-# asdf global mongodb $VERSION_MONGODB
+# https://github.com/docker-library/docs/blob/master/postgres/README.md
+docker run -d --restart=always --network=www \
+  -p 5432:5432 \
+  -v $PWD/docker-data/postgres:/var/lib/postgresql \
+  -e POSTGRES_PASSWORD=FILLINSOMEPASSWORD \
+  --name postgres-www postgres:$DOCKER_POSTGRES
 
+# https://hub.docker.com/_/redis?tab=description
+docker run -d --restart=always --network=www \
+  -v $PWD/docker-data/redis:/data \
+  --name redis-www redis:$DOCKER_REDIS
+#  -v $PWD/redis.conf:/usr/local/etc/redis/redis.conf \
 
-# asdf plugin-add elasticsearch https://github.com/asdf-community/asdf-elasticsearch.git
-# asdf install elasticsearch $VERSION_ELASTICSEARCH
-# asdf global elasticsearch $VERSION_ELASTICSEARCH
+# https://hub.docker.com/_/mongo?tab=description
+docker run -d --restart=always --network=www \
+  -v $PWD/docker-data/mongo:/data/db \
+  -e MONGO_INITDB_ROOT_USERNAME=mongoadmin \
+  -e MONGO_INITDB_ROOT_PASSWORD=FILLINSOMEPASSWORD \
+  --name mongo-www mongo:$DOCKER_MONGO
+
+# https://www.elastic.co/guide/en/elasticsearch/reference/7.5/docker.html
+docker run -d --restart=always --network=www \
+  -p 9200:9200 -p 9300:9300 \
+  -v $PWD/docker-data/elasticsearch:/usr/share/elasticsearch/data \
+  -e "discovery.type=single-node" \
+  --name elasticsearch-www elasticsearch:$DOCKER_ELASTICSEARCH
 
 
 
@@ -302,10 +321,16 @@ echo helm $(helm version)
 kubectl version
 echo kops $(kops version)
 sops --version
-redis-cli --version
-psql --version
-mongo --version
-bazel --version
+
+
+#docker run -it --rm postgres:$DOCKER_POSTGRES psql --version
+docker exec -it postgres-www psql --version
+#docker run -it --rm redis:$DOCKER_REDIS redis-cli -v
+docker exec -it redis-www redis-cli -v
+#docker run -it --rm mongo:$DOCKER_MONGO mongo --version
+docker exec -it mongo-www mongo --version
+#docker run -it --rm elasticsearch:$DOCKER_ELASTICSEARCH bin/elasticsearch --version
+docker exec -it elasticsearch-www bin/elasticsearch --version
 
 
 
