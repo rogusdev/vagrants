@@ -4,6 +4,6 @@ echo -e '#!/bin/sh -e'"\nmount -t vboxsf -o rw,uid=$USER,gid=$USER vbshared /mnt
 sudo apt-get update && sudo apt-get upgrade -y
 
 curl https://raw.githubusercontent.com/rogusdev/vagrants/master/all/setup_ubuntu.sh \
-  | sed 's|echo -e "\ncd /vagrant" >> $PROFILE_FILE||' \
+  | sed 's|echo -e "\\ncd /vagrant" >> $PROFILE_FILE|#\0|' \
   | sed 's|UBUNTU_CODENAME=$(lsb_release -cs)|UBUNTU_CODENAME=$(lsb_release -ucs)|' \
   > setup.sh
