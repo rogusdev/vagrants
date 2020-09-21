@@ -1,10 +1,15 @@
 #!/usr/bin/env bash
 
-# Enable truly non interactive apt-get installs
-export DEBIAN_FRONTEND=noninteractive
 
 PROFILE_FILE=$HOME/.bashrc  # ubuntu
 echo -e "\ncd /vagrant" >> $PROFILE_FILE
+
+# NOTE: this will fail to install apt repos in elementary os and other ubuntu derivatives, instead use lsb_release -ucs (upstream codename)
+UBUNTU_CODENAME=$(lsb_release -cs)
+
+
+# Enable truly non interactive apt-get installs
+export DEBIAN_FRONTEND=noninteractive
 
 # grub-pc ignores noninteractive env var so really force it ala
 #  https://github.com/chef/bento/issues/661#issuecomment-248136601
@@ -24,6 +29,21 @@ sudo apt-get install -yq jq unzip libcurl4 libcurl4-openssl-dev zlib1g-dev libpn
 
 # add-apt-repository
 sudo apt-get install -yq apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+
+
+
+# https://docs.docker.com/engine/install/ubuntu/
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $UBUNTU_CODENAME stable"
+
+sudo apt-get update
+sudo apt-get install -yq docker-ce docker-ce-cli containerd.io
+
+sudo usermod -aG docker $(whoami)  # required for docker permissions! (you will need to restart your shell after this)
+
+# docker-compose via asdf below
+
+
 
 
 HOME_ASDF='$HOME/.asdf'
@@ -75,6 +95,14 @@ DOCKER_MONGO=4.4.1-bionic
 DOCKER_ELASTICSEARCH=7.9.1
 
 
+
+
+
+asdf plugin-add docker-compose https://github.com/virtualstaticvoid/asdf-docker-compose.git
+asdf install docker-compose $VERSION_DOCKER_COMPOSE
+asdf global docker-compose $VERSION_DOCKER_COMPOSE
+
+sudo curl -L https://raw.githubusercontent.com/docker/compose/$VERSION_DOCKER_COMPOSE/contrib/completion/bash/docker-compose -o /etc/bash_completion.d/docker-compose
 
 
 
@@ -198,12 +226,6 @@ asdf global sops $VERSION_SOPS
 
 
 
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o $HOME/awscliv2.zip \
- && unzip -uq $HOME/awscliv2.zip -d $HOME \
- && sudo $HOME/aws/install --update \
- && rm -rf $HOME/aws*
-
-
 
 # somehow erlang requires java??  pass.  also takes a realyl long time to build
 
@@ -235,31 +257,6 @@ curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o $HOME/awscliv
 
 # sudo apt-get install -yq libpq-dev pgadmin4 postgresql-client mongodb-org-tools
 
-
-
-
-curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
-
-
-
-
-
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-# NOTE: this will fail to install in elementary os and other ubuntu derivatives, instead use lsb_release -ucs (upstream codename)
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-
-sudo apt-get update
-sudo apt-get install -yq docker-ce docker-ce-cli containerd.io
-
-sudo usermod -aG docker $(whoami)  # required for docker permissions! (you will need to restart your shell after this)
-
-
-
-asdf plugin-add docker-compose https://github.com/virtualstaticvoid/asdf-docker-compose.git
-asdf install docker-compose $VERSION_DOCKER_COMPOSE
-asdf global docker-compose $VERSION_DOCKER_COMPOSE
-
-sudo curl -L https://raw.githubusercontent.com/docker/compose/$VERSION_DOCKER_COMPOSE/contrib/completion/bash/docker-compose -o /etc/bash_completion.d/docker-compose
 
 
 
@@ -298,6 +295,19 @@ docker run -d --restart=always --network=www \
   -e "discovery.type=single-node" \
   --name elasticsearch-www elasticsearch:$DOCKER_ELASTICSEARCH
 
+
+
+
+
+# TODO: aws cli in asdf
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o $HOME/awscliv2.zip \
+ && unzip -uq $HOME/awscliv2.zip -d $HOME \
+ && sudo $HOME/aws/install --update \
+ && rm -rf $HOME/aws*
+
+
+
+curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
 
 
 
