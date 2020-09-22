@@ -40,6 +40,7 @@ sudo apt-get update
 sudo apt-get install -yq docker-ce docker-ce-cli containerd.io
 
 sudo usermod -aG docker $(whoami)  # required for docker permissions! (you will need to restart your shell after this)
+id $(whoami)  # attempting to not require a re-login, so subsequent docker commands will work
 
 # docker-compose via asdf below
 
