@@ -87,8 +87,8 @@ VERSION_HELM=3.3.3
 VERSION_KUBECTL=1.19.2
 VERSION_KOPS=v1.18.1
 VERSION_SOPS=v3.6.1
-VERSION_ERLANG=22.3
-VERSION_ELIXIR=1.10
+VERSION_ERLANG=23.1
+VERSION_ELIXIR=1.10.4-otp-23
 
 DOCKER_POSTGRES=12.4-alpine
 DOCKER_REDIS=6.0.8-buster
@@ -228,19 +228,18 @@ asdf global sops $VERSION_SOPS
 
 
 
-# somehow erlang requires java??  pass.  also takes a realyl long time to build
+# linux erlang
+sudo apt-get -y install build-essential autoconf m4 libncurses5-dev libwxgtk3.0-gtk3-dev libgl1-mesa-dev libglu1-mesa-dev libpng-dev libssh-dev unixodbc-dev xsltproc fop libxml2-utils libncurses-dev
 
-# # linux erlang
-# #sudo apt-get install -yq build-essential autoconf m4 libncurses5-dev libwxgtk3.0-dev libgl1-mesa-dev libglu1-mesa-dev libpng-dev libssh-dev unixodbc-dev xsltproc fop
+#  note that erlang requires java for "jinterface": http://erlang.org/doc/installation_guide/INSTALL.html
+asdf plugin-add erlang https://github.com/asdf-vm/asdf-erlang.git
+asdf install erlang $VERSION_ERLANG
+asdf global erlang $VERSION_ERLANG
 
-# asdf plugin-add erlang https://github.com/asdf-vm/asdf-erlang.git
-# asdf install erlang $VERSION_ERLANG
-# asdf global erlang $VERSION_ERLANG
-
-
-# asdf plugin-add elixir https://github.com/asdf-vm/asdf-elixir.git
-# asdf install elixir $VERSION_ELIXIR
-# asdf global elixir $VERSION_ELIXIR
+# elixir ofc requires erlang
+asdf plugin-add elixir https://github.com/asdf-vm/asdf-elixir.git
+asdf install elixir $VERSION_ELIXIR
+asdf global elixir $VERSION_ELIXIR
 
 
 
@@ -330,8 +329,9 @@ java -version
 gradle --version
 go version
 rustc --version
-# erlang --version
-# elixir --version
+# https://stackoverflow.com/questions/9560815/how-to-get-erlangs-release-version-number-from-a-shell
+erl -eval '{ok, Version} = file:read_file(filename:join([code:root_dir(), "releases", erlang:system_info(otp_release), "OTP_VERSION"])), io:fwrite(Version), halt().' -noshell
+elixir --version
 heroku --version
 terraform --version
 echo helm $(helm version)
